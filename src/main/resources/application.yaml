@@ -1,0 +1,16 @@
+app:
+  streaming:
+    default-chunk-size: 3145728
+server:
+  port: 8081
+spring:
+  application:
+    name: video-delivery
+services:
+  video_service:
+    url: http://localhost:8080
+minio:
+  url: http://localhost:9000
+  username: user
+  password: password
+  object-part-size: 5242880
