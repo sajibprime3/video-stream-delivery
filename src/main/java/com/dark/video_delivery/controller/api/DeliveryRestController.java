@@ -1,5 +1,6 @@
 package com.dark.video_delivery.controller.api;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import com.dark.video_delivery.controller.HttpConstants;
@@ -22,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/videoplayback")
+@RequestMapping("/playback")
 public class DeliveryRestController {
 
     private final DeliveryService deliveryService;
@@ -30,12 +31,12 @@ public class DeliveryRestController {
     @Value("${app.streaming.default-chunk-size}")
     public Integer defaultChunkSize;
 
-    @GetMapping("/{id}")
+    @GetMapping("/{uuid}")
     public ResponseEntity<byte[]> getVideoChunk(
             @RequestHeader(value = HttpHeaders.RANGE, required = false) String range,
-            @PathVariable long id) {
+            @PathVariable UUID uuid) {
         Range parsedRange = Range.parseHttpRangeString(range, defaultChunkSize);
-        MetadataWithChunk chunkWithMetadata = deliveryService.fetchVideoChunk(id, parsedRange);
+        MetadataWithChunk chunkWithMetadata = deliveryService.fetchVideoChunk(uuid, parsedRange);
         return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
                 .contentType(chunkWithMetadata.contentType())
                 .header(HttpHeaders.ACCEPT_RANGES, HttpConstants.ACCEPTS_RANGES_VALUE)
@@ -44,12 +45,12 @@ public class DeliveryRestController {
                 .body(chunkWithMetadata.chunk());
     }
 
-    @GetMapping("/preview/{id}")
+    @GetMapping("/{uuid}/preview")
     public ResponseEntity<byte[]> getPreviewChunk(
             @RequestHeader(value = HttpHeaders.RANGE, required = false) String range,
-            @PathVariable long id) {
+            @PathVariable UUID uuid) {
         Range parsedRange = Range.parseHttpRangeString(range, defaultChunkSize);
-        MetadataWithChunk chunkWithMetadata = deliveryService.fetchPreviewChunk(id, parsedRange);
+        MetadataWithChunk chunkWithMetadata = deliveryService.fetchPreviewChunk(uuid, parsedRange);
         return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
                 .contentType(chunkWithMetadata.contentType())
                 .header(HttpHeaders.ACCEPT_RANGES, HttpConstants.ACCEPTS_RANGES_VALUE)
@@ -58,9 +59,9 @@ public class DeliveryRestController {
                 .body(chunkWithMetadata.chunk());
     }
 
-    @GetMapping("/{id}/thumbnail")
-    public ResponseEntity<byte[]> getThumbnail(@PathVariable long id) {
-        MetadataWithChunk fetchedChunkWithMetadata = deliveryService.fetchThumbnail(id);
+    @GetMapping("/{uuid}/thumbnail")
+    public ResponseEntity<byte[]> getThumbnail(@PathVariable UUID uuid) {
+        MetadataWithChunk fetchedChunkWithMetadata = deliveryService.fetchThumbnail(uuid);
         return ResponseEntity.ok()
                 .contentType(fetchedChunkWithMetadata.contentType())
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.DAYS))

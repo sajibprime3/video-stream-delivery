@@ -1,14 +1,16 @@
 package com.dark.video_delivery.service;
 
+import java.util.UUID;
+
 import com.dark.video_delivery.dto.MetadataWithChunk;
 import com.dark.video_delivery.util.Range;
 
 public interface DeliveryService {
 
-    MetadataWithChunk fetchVideoChunk(long id, Range range);
+    MetadataWithChunk fetchVideoChunk(UUID uuid, Range range);
 
-    MetadataWithChunk fetchPreviewChunk(long id, Range range);
+    MetadataWithChunk fetchPreviewChunk(UUID uuid, Range range);
 
-    MetadataWithChunk fetchThumbnail(long id);
+    MetadataWithChunk fetchThumbnail(UUID uuid);
 
 }

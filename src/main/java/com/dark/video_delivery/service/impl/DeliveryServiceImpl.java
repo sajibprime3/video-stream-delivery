@@ -1,5 +1,7 @@
 package com.dark.video_delivery.service.impl;
 
+import java.util.UUID;
+
 import com.dark.video_delivery.dto.Metadata;
 import com.dark.video_delivery.dto.MetadataWithChunk;
 import com.dark.video_delivery.service.DeliveryService;
@@ -31,11 +33,11 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final RestTemplate restTemplete;
 
     @Override
-    public MetadataWithChunk fetchVideoChunk(long id, Range range) {
+    public MetadataWithChunk fetchVideoChunk(UUID uuid, Range range) {
         // FIX: DOS alert. We're blasting the video service with this request. need to
         // cache the metadata to reuse it somehow and not send useless requests to video
         // service.
-        String url = videoServiceUrl + "/video/" + id + "/metadata";
+        String url = videoServiceUrl + "/video/" + uuid + "/metadata";
         Metadata metadata = restTemplete.getForObject(url, Metadata.class);
         return new MetadataWithChunk(metadata.name(),
                 metadata.size(),
@@ -45,13 +47,13 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
-    public MetadataWithChunk fetchPreviewChunk(long id, Range range) {
+    public MetadataWithChunk fetchPreviewChunk(UUID uuid, Range range) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public MetadataWithChunk fetchThumbnail(long id) {
+    public MetadataWithChunk fetchThumbnail(UUID uuid) {
         // TODO Auto-generated method stub
         return null;
     }
