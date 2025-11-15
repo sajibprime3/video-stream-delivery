@@ -48,14 +48,28 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     public MetadataWithChunk fetchPreviewChunk(UUID uuid, Range range) {
-        // TODO Auto-generated method stub
-        return null;
+        // FIX: DOS alert. We're blasting the video service with this request. need to
+        // cache the metadata to reuse it somehow and not send useless requests to video
+        // service.
+        String url = videoServiceUrl + "/video/" + uuid + "/preview/metadata";
+        Metadata metadata = restTemplete.getForObject(url, Metadata.class);
+        return new MetadataWithChunk(metadata.name(),
+                metadata.size(),
+                MediaType.parseMediaType(metadata.contentType()),
+                ChunkReader.read(metadata.name(), range, metadata.size(), previewStorageService));
     }
 
     @Override
     public MetadataWithChunk fetchThumbnail(UUID uuid) {
-        // TODO Auto-generated method stub
-        return null;
+        // FIX: DOS alert. We're blasting the video service with this request. need to
+        // cache the metadata to reuse it somehow and not send useless requests to video
+        // service.
+        String url = videoServiceUrl + "/video/" + uuid + "/thumbnail/metadata";
+        Metadata metadata = restTemplete.getForObject(url, Metadata.class);
+        return new MetadataWithChunk(metadata.name(),
+                metadata.size(),
+                MediaType.parseMediaType(metadata.contentType()),
+                ChunkReader.read(metadata.name(), metadata.size(), thumbnailStorageService));
     }
 
 }
